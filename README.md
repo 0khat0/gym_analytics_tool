@@ -1,71 +1,88 @@
-# gym_analytics_tool
-Scalable, LLM-powered gym analytics tool that uses structured data and the OpenAI API to answer natural language questions about member activity, payments, and engagement. Modular, extensible, and API-ready.
+# 🧠 AI-Powered Gym Analytics Tool
 
-# 🧠 AI-Powered Gym Analytics Tool (WIP)
+A scalable, GPT-powered analytics assistant for gyms, dojos, and fitness centers.  
+It reads structured data like member check-ins, payments, and personal details — and lets you ask real business questions in plain English.
 
-This is a modular, AI-integrated analytics tool built for gyms and fitness spaces to streamline operational insights using large language models. The system takes structured data inputs (check-ins, payments, and member metadata) and enables managers to ask natural questions like:
-
-> "Who hasn't shown up this week?"  
-> "How many members are overdue?"  
-> "Which members from Toronto checked in last month?"
-
-Built in Python and powered by OpenAI's API, this project serves as a foundation for automating and scaling gym management workflows — from attendance tracking to payment reconciliation — without manually digging through spreadsheets.
+> No more spreadsheets, no SQL, no filters. Just ask.
 
 ---
 
-## 💡 Features
+## ✅ Why We Built This
 
-- ✅ GPT-powered natural language Q&A engine
-- ✅ Parses multiple structured data files (`checkins.csv`, `payments.csv`, `members.csv`)
-- ✅ Dynamically computes payment status, active/inactive members, and time-based analytics
-- ✅ JSON-style prompt summaries for accurate LLM reasoning
-- ✅ Built to extend into APIs, UIs, or third-party integrations
-- ✅ Can support check-ins via RFID, QR, mobile app, or API — implementation-agnostic
+Gyms often track data in spreadsheets or internal systems, but owners and managers rarely have time to analyze trends or member behavior.
 
----
+This project shows how **LLMs (Large Language Models)** like ChatGPT can automate those insights — from financial tracking to identifying at-risk members.
 
-## 🚀 Why It Matters
-
-This project demonstrates how LLMs can automate decision-making and operations for real businesses. It replaces manual filtering, Excel lookups, and if-statements with a single natural language interface.
-
-> Designed to be scalable, API-driven, and framework-agnostic — adaptable to various check-in or CRM systems.
+### 🔍 Built for:
+- Managers who want **trend-level insights** (“Are female members showing up less this month?”)
+- Admins tracking **payments and overdue follow-ups**
+- Owners seeking **member retention and engagement analytics**
+- Operators who want to **ask instead of code**
 
 ---
 
-## 📦 Current Data Inputs
+## 🧠 What It Does
 
-- `checkins.csv`: Timestamped check-in logs
-- `payments.csv`: Payment due dates and most recent payments
-- `members.csv`: Member profiles (age, gender, location, join date)
-
----
-
-## 🔍 Example Queries
-
-- "Who’s overdue on payments?"
-- "List all female members from Toronto"
-- "Who checked in more than 3 times this month?"
-- "Which members joined this year and are still active?"
-- "How many people came last Monday?"
+- ✅ Loads data from CSVs (`checkins.csv`, `members.csv`, `payments.csv`)
+- ✅ Dynamically builds structured summaries (status, check-in history, overdue status, personal notes)
+- ✅ Passes clean JSON-like data to GPT for accurate soft analysis
+- ✅ Lets you ask natural questions like:
+  - "Who hasn’t shown up in 10+ days?"
+  - "Any new members dropping off early?"
+  - "Which members owe money but still attend?"
+  - "List women under 30 who haven’t checked in this week"
+  - "Give me trends or risks I should look at this month"
 
 ---
 
-## 🧱 Stack
+## 💡 Highlights
 
-- Python 3.x
-- `pandas` for lightweight data manipulation
-- OpenAI (`gpt-3.5-turbo`) for natural language processing
-- `.env`-based config for API security
+- ⚙️ Built in Python with `pandas` + OpenAI’s `gpt-3.5-turbo`
+- 🔐 `.env` file support for secure API key management
+- 🔄 Ready for Streamlit/web UI or API integration
+- 🔓 Not locked to one system — works with QR, RFID, apps, or manual check-ins
 
 ---
 
-## 🛠️ How to Run
+## 📁 Current Data Inputs
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/yourusername/gym-analytics-tool.git
-   cd gym-analytics-tool
-   pip install -r requirements.txt
-   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxx
-   python main.py
+- **`members.csv`**  
+  Age, gender, location, join date, and personal notes
 
+- **`checkins.csv`**  
+  Timestamped gym check-ins with member ID
+
+- **`payments.csv`**  
+  Last payment and due date per member
+
+---
+
+## 💬 Example Queries (Manager-Friendly)
+
+These show off GPT's soft skills — identifying trends, patterns, and priorities:
+
+| Category | Sample Questions |
+|----------|------------------|
+| **Overdue** | “Who owes money but checked in this week?” |
+| **Retention Risk** | “Who joined in the last 3 months but stopped coming?” |
+| **Engagement** | “Which members checked in most this month?” |
+| **Demographic Insights** | “How many women under 30 from Mississauga came last week?” |
+| **Follow-Ups** | “Anyone with notes about coaching or disengagement?” |
+| **Actionable Trends** | “Is engagement going down among Toronto members?” |
+
+---
+
+## 🛠️ How to Run Locally
+
+```bash
+git clone https://github.com/0khat0/gym_analytics_tool.git
+cd gym_analytics_tool
+
+# Install requirements (pip install pandas, openai, python-dotenv)
+pip install -r requirements.txt
+
+# Add your OpenAI key
+echo OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxx > .env
+
+# Run it
+python main.py
