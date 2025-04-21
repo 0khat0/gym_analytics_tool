@@ -1,15 +1,21 @@
 import pandas as pd
+from datetime import datetime
+from dotenv import load_dotenv
 import os
 
-def load_checkins(filepath="checkins.csv"):
-    df = pd.read_csv(filepath, parse_dates=["Date"])
-    return df
+load_dotenv()
 
-def load_payments(filepath="payments.csv"):
-    df = pd.read_csv(filepath, parse_dates=["Payment Due Date", "Latest Payment"])
-    return df
+def get_openai_key():
+    return os.getenv("OPENAI_API_KEY")
 
-from datetime import datetime
+def load_checkins(filepath="data/checkins.csv"):
+    return pd.read_csv(filepath, parse_dates=["Date"])
+
+def load_payments(filepath="data/payments.csv"):
+    return pd.read_csv(filepath, parse_dates=["Payment Due Date", "Latest Payment"])
+
+def load_members(filepath="data/members.csv"):
+    return pd.read_csv(filepath, parse_dates=["Joined"])
 
 def generate_summary(checkins_df, payments_df, members_df):
     summary = []
@@ -22,9 +28,9 @@ def generate_summary(checkins_df, payments_df, members_df):
         sex = member["Sex"]
         location = member["Location"]
         joined = member["Joined"].date()
+        notes = member.get("Notes", "")
         months_active = (today.year - joined.year) * 12 + (today.month - joined.month)
 
-        # Payment Info
         payment_row = payments_df[payments_df["Member ID"] == member_id]
         if payment_row.empty:
             due_date = "Unknown"
@@ -37,13 +43,11 @@ def generate_summary(checkins_df, payments_df, members_df):
             last_payment = last_payment_raw.date()
             status = "Overdue" if today > due_date_raw else "Active"
 
-        # Check-ins
         checkins = checkins_df[checkins_df["Member ID"] == member_id]
         checkin_dates_raw = checkins["Date"].dt.date.tolist()
         checkin_dates = [d.strftime("%B %d") for d in checkin_dates_raw]
         last_checkin = max(checkin_dates_raw).strftime("%B %d") if checkin_dates_raw else "No check-ins"
 
-        # Assemble member JSON block
         member_json = {
             "Member ID": member_id,
             "Name": name,
@@ -57,23 +61,33 @@ def generate_summary(checkins_df, payments_df, members_df):
             "Status": status,
             "Check-ins": len(checkin_dates),
             "Check-in Dates": checkin_dates,
-            "Last Check-in": last_checkin
+            "Last Check-in": last_checkin,
+            "Notes": notes
         }
 
         summary.append(member_json)
 
-    # Return as a string (JSON-style)
     import json
     return json.dumps(summary, indent=2)
 
+def generate_stats_summary(members_df, payments_df, checkins_df):
+    summary = {}
 
+    summary["Total Members"] = len(members_df)
+    summary["Males"] = int((members_df["Sex"] == "M").sum())
+    summary["Females"] = int((members_df["Sex"] == "F").sum())
 
-from dotenv import load_dotenv
-load_dotenv()
+    location_counts = members_df["Location"].value_counts().to_dict()
+    summary["Members by Location"] = location_counts
 
-def get_openai_key():
-    return os.getenv("OPENAI_API_KEY")
+    today = pd.Timestamp(datetime.today().date())
+    payments_df["Overdue"] = payments_df["Payment Due Date"] < today
+    summary["Overdue Members"] = int(payments_df["Overdue"].sum())
+    summary["Active Members"] = int(len(payments_df) - summary["Overdue Members"])
 
-def load_members(filepath="members.csv"):
-    df = pd.read_csv(filepath, parse_dates=["Joined"])
-    return df
+    last_checkins = checkins_df.groupby("Member ID")["Date"].max()
+    inactive_ids = last_checkins[last_checkins < (today - pd.Timedelta(days=10))].index.tolist()
+    inactive_names = members_df[members_df["Member ID"].isin(inactive_ids)]["Name"].tolist()
+    summary["Inactive (10+ days)"] = inactive_names
+
+    return summary
