@@ -59,3 +59,13 @@ This project demonstrates how LLMs can automate decision-making and operations f
 
 ---
 
+## 🛠️ How to Run
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/yourusername/gym-analytics-tool.git
+   cd gym-analytics-tool
+   pip install -r requirements.txt
+   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxx
+   python main.py
+
