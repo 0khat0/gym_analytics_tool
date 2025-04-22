@@ -91,3 +91,9 @@ def generate_stats_summary(members_df, payments_df, checkins_df):
     summary["Inactive (10+ days)"] = inactive_names
 
     return summary
+
+def load_dataframes(checkins_file, payments_file, members_file):
+    checkins = pd.read_csv(checkins_file)
+    payments = pd.read_csv(payments_file)
+    members  = pd.read_csv(members_file)
+    return checkins, payments, members    
